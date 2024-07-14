@@ -1,4 +1,4 @@
-
+import subprocess
 import json
 import os
 from datetime import datetime
@@ -8,7 +8,8 @@ import pytz
 from discord import Message, Guild, TextChannel, Permissions
 from discord.ext import commands
 
-bot = commands.Bot(command_prefix='g!')
+intents = discord.Intents.default()  # This is how you define 'intents'
+bot = commands.Bot(command_prefix='g!', intents=intents)
 
 if os.path.isfile("servers.json"):
     with open('servers.json', encoding='utf-8') as f:
@@ -128,7 +129,7 @@ async def sendAll(message: Message):
         text=f'{message.guild.name} | Server User: {message.guild.member_count}',
         icon_url=f'{message.guild.icon_url}')
     embed.set_thumbnail(url=message.author.avatar_url)
-    embed.add_field(name="** **", value="`📌`[Support](https://discord.gg/encoders)・`🤖`[Bot-Invite](https://discord.com/api/oauth2/authorize?client_id=922536268892622888&permissions=8&scope=bot%20applications.commands)", inline=False)
+    embed.add_field(name="** **", value="`📌`[Support](https://discord.gg/8DSvY9mmQy)・`🤖`[Bot-Invite](https://discord.com/api/oauth2/authorize?client_id=922536268892622888&permissions=8&scope=bot%20applications.commands)", inline=False)
     
 
 
@@ -164,7 +165,7 @@ async def sendAllWillkommen(ctx):
     embed.add_field(
         name=f'Support & Bot⠀',
         value=
-        f'[Support](https://discord.gg/encoders)・[Bot invite](https://discord.com/api/oauth2/authorize?client_id=922536268892622888&permissions=8&scope=bot%20applications.commands)',
+        f'[Support & modmail](https://discord.gg/8DSvY9mmQy)・[Bot invite]()',
         inline=False)
 
     for server in servers["servers"]:
@@ -222,7 +223,7 @@ bot.help_command = NewHelpCommand()
 @bot.event
 async def on_guild_join(guild):
     print(f'Bot auf Server {guild.name} hinzugefügt!')
-    channel = bot.get_channel(922468435802337341)
+    channel = bot.get_channel(1261995769750360105)
     if channel:
         embed = discord.Embed(
             title='Bot auf Server hinzugefügt!',
@@ -235,7 +236,7 @@ async def on_guild_join(guild):
 @bot.event
 async def on_guild_remove(guild):
     print(f'Bot auf Server {guild.name} entfernt!')
-    channel = bot.get_channel(896459432001671200)
+    channel = bot.get_channel(1261995769750360105)
     if channel:
         embed = discord.Embed(
             title='Bot auf Server entfernt!',
@@ -247,7 +248,7 @@ async def on_guild_remove(guild):
 
 @bot.command()
 async def invite(ctx):
-    embed=discord.Embed(title="\nInvite<a:Blob_Join:858565965854670878>\n", url="https://discord.com/api/oauth2/authorize?client_id=922536268892622888&permissions=8&scope=bot%20applications.commands",color=0x662a85)
+    embed=discord.Embed(title="\nInvite<a:Blob_Join:858565965854670878>\n", url="",color=0x662a85)
     await ctx.send(embed=embed)
 
 @bot.command(name='support', aliases=['ss'])
@@ -259,5 +260,12 @@ async def support(ctx):
 				color=0x662a85)
 		await ctx.send(embed=embed)
 
+@bot.command()
+async def rs(ctx):
+    await ctx.send("Restarting...")
+    os.startfile(__file__)
+    os._exit(1)
 
-bot.run('')
+subprocess.Popen(["python3", "app.py"])
+
+bot.run(os.environ.get('TOKEN'))

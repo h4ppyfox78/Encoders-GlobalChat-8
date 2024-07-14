@@ -8,3 +8,8 @@ channel = "stable-23_05"
 
 [env]
 LANG = "en_US.UTF-8"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+exposeLocalhost = true
