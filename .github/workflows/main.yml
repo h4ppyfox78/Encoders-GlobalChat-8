@@ -1,0 +1,47 @@
+name: Create Assets
+
+on:
+  release:
+    types: [published]
+    
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Cache programs and libraries
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-tools-and-libraries
+      with:
+        path: ~/.stack
+        key: ${{ runner.os }}-ca-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-ca-${{ env.cache-name }}-
+          ${{ runner.os }}-ca-
+          ${{ runner.os }}-
+
+    - name: Build the project
+      run: stack build
+        
+    - name: Tar and strip the binary
+      run: |
+        export PROGRAM=chbwa
+        cp `stack exec -- which $PROGRAM` $PROGRAM
+        tar -cavf program.tar.gz $PROGRAM
+        
+    - name: Upload assets
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./program.tar.gz
+        asset_name: program-${{ runner.os }}.tar.gz
+        asset_content_type: application/tar.gz
