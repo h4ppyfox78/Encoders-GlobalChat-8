@@ -1,4 +1,5 @@
 import subprocess
+from dotenv import load_dotenv
 import json
 import os
 from datetime import datetime
@@ -7,6 +8,9 @@ import discord
 import pytz
 from discord import Message, Guild, TextChannel, Permissions
 from discord.ext import commands
+
+load_dotenv()
+
 
 intents = discord.Intents.default()  # This is how you define 'intents'
 bot = commands.Bot(command_prefix='g!', intents=intents)
